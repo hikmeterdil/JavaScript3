@@ -1,3 +1,37 @@
 .alert-error {
-  color: red;
+  color:rgb(202, 5, 5);
+  background-color: coral;
+  height:3em;
+  padding:1em;
+}
+*{
+  box-sizing: border-box;
+}
+
+#root {
+  display:flex;
+  margin:1em;
+  flex-direction: column;
+}
+
+ul{
+  display:flex;
+  flex-flow: column;
+  justify-content: flex-start;
+  list-style-type: none;
+  padding-inline-start: 0;
+}
+
+li{
+  margin:0.5em;
+  padding: 1em;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#header {
+  background-color: blue;
+  height:4em;
+  margin-bottom:1em;
+  color:white;
+  padding:1em;
 }

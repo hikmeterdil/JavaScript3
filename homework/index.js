@@ -29,8 +29,37 @@
     return elem;
   }
 
+  function formatDate(updateResponse) {
+    const dateTime = new Date(updateResponse);
+    return dateTime.toLocaleString();
+  }
+
+  function createTable(table,header,value) {
+    const tr = createAndAppend('tr', table);
+    createAndAppend('th', tr, { text: header })
+    createAndAppend('td', tr, { text: value }) 
+    return tr;
+  }
+
+ 
+
   function renderRepoDetails(repo, ul) {
-    createAndAppend('li', ul, { text: repo.name });
+    const li = createAndAppend('li', ul);
+    const table = createAndAppend('table', li)
+    const tr1 = createTable(table, 'Repository:', '');
+    
+    createAndAppend('a',tr1.lastChild, {
+      href: repo.html_url,
+      text: repo.name,
+    });
+    createTable(table, 'Description: ', repo.description);
+    createTable(table, 'Fork: ', repo.forks);
+    createTable(table, 'Updated: ', formatDate(repo.updated_at));
+
+
+
+
+
   }
 
   function main(url) {
@@ -38,17 +67,30 @@
       const root = document.getElementById('root');
       if (err) {
         createAndAppend('div', root, {
+          text: 'HYF Repositories',
+          id: 'header',
+        });
+        createAndAppend('div', root, {
           text: err.message,
           class: 'alert-error',
         });
         return;
       }
+      const header = createAndAppend('div', root, {
+        text: 'HYF Repositories' , 
+        id:'header'
+      })
+
       const ul = createAndAppend('ul', root);
-      repos.forEach(repo => renderRepoDetails(repo, ul));
+      
+    
+        repos.sort((a, b) => a.name.localeCompare(b.name));
+        repos.forEach(repo => renderRepoDetails(repo, ul));
+     
     });
   }
 
   const HYF_REPOS_URL =
-    'https://api.github.com/orgs/HackYourFuture/repos?per_page=100';
+    'https://api.github.com/orgs/HackYourFuture/repos?per_page=10';
   window.onload = () => main(HYF_REPOS_URL);
 }
