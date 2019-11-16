@@ -2,20 +2,22 @@
   const left = document.querySelector('.left');
   const right = document.querySelector('.right');
    
-  function fetchJSON(url, cb) {
-        fetch(url)
-      .then(response => {
+  async function fetchJSON(url) {
+     const response = await axios.get(url);
+    try {
         if(response.status !== 200)
           {
             const err = new Error();
             err.message = response.status;
             throw err;
           }
-          return response.json()})
-      .then(json => cb(null, json))
-      .catch(err => cb(err));
+          return response.data }
+    catch {
+      throw new Error(`something went wrong - ${response.status}`)
+    }
+
+    }
   
-  }
 
   function createAndAppend(name, parent, options = {}) {
     const elem = document.createElement(name);
@@ -49,16 +51,14 @@
   }
   
   function fetchandRenderContributers(repo) {
-    fetchJSON(repo.contributors_url, (err, contributers) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-
+    fetchJSON(repo.contributors_url)
+    .then((contributers)=>{
       const ul = createAndAppend('ul', right);
       contributers.forEach(contributer =>
         renderContributor(contributer, right),
-      );
+      )})
+    .catch(error=>{
+      throw new Error(`something went wrong${error}`)
     });
   }
 
@@ -119,19 +119,8 @@
   }
 
   function main(url) {
-    fetchJSON(url, (err, repos) => {
-      const root = document.getElementById('root');
-      if (err) {
-        createAndAppend('div', root, {
-          text: 'HYF Repositories',
-          id: 'header',
-        });
-        createAndAppend('div', root, {
-          text: err.message,
-          class: 'alert-error',
-        });
-        return;
-      }
+    fetchJSON(url)
+    .then(repos =>{
       const header = createAndAppend('div', root, {
         text: 'HYF Repositories',
         id: 'header',
@@ -143,13 +132,29 @@
         id: 'repoList',
       });
 
-
       repos.sort((a, b) => a.name.localeCompare(b.name));
       repos.forEach((repo, index) => addOptions(repo, index));
       selectOption(repos);
       const event = new Event('change');
       select1.dispatchEvent(event);
-    });
+
+    })
+    .catch(error=>{
+      const root = document.getElementById('root');
+      if (error) {
+        createAndAppend('div', root, {
+          text: 'HYF Repositories',
+          id: 'header',
+        });
+        createAndAppend('div', root, {
+          text: error.message,
+          class: 'alert-error',
+        });
+        return;
+      }
+
+    })
+    
   }
 
   const HYF_REPOS_URL =
