@@ -17,7 +17,7 @@ function makeRequestWithXHR() {
         try {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
-                    renderImage(xhr.responseURL)
+                    renderImage(xhr.responseURL, '#image')
                 } else {
                     console.error('There was a problem with the request, here is the response:');
                     console.error(xhr.responseText)
@@ -33,7 +33,7 @@ function makeRequestWithXHR() {
 function makeRequestWithAxios() {
     axios.get(RANDOM_PIC_URL)
         .then(function(response) {
-            renderImage(response.request.responseURL)
+            renderImage(response.request.responseURL, '#image2')
         })
         .catch(function(error) {
             console.error('There was a problem with the request:');
@@ -44,8 +44,8 @@ function makeRequestWithAxios() {
         })
 }
 
-function renderImage(imageURL) {
-    const imageElement = document.querySelector('#image');
+function renderImage(imageURL, parent) {
+    const imageElement = document.querySelector(parent);
     imageElement.setAttribute('src', imageURL)
 }
 
